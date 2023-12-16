@@ -1,0 +1,19 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json
+@inject IHttpContextAccessor HttpContextAccessor
+
+
+@{
+    var session = HttpContextAccessor.HttpContext.Session;
+    string jsoncart = session.GetString(FPTBookStore.Controllers.HomeController.CARTKEY);
+    if (jsoncart != null)
+    {
+        var cart = JsonConvert.DeserializeObject<List<CartItem>>(jsoncart);
+        
+        <a asp-route="cart" class="btn border">
+            <i class="fas fa-shopping-cart text-primary"></i>
+            <span class="badge">@cart.Count</span>
+        </a>
+
+    }
+}

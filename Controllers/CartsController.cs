@@ -24,8 +24,7 @@ namespace FPTBookStore.Controllers
             _logger = logger;
             this.db = db;
         }
-        //Add cart In Details
-        // Cart
+        
         [Authorize(Roles = "User")]
         public IActionResult AddToCart(long productid, int Soluong)
         {
@@ -36,16 +35,12 @@ namespace FPTBookStore.Controllers
             {
                 var product = db.Book.SingleOrDefault(p => p.IdBook == productid);
                 cart.Add(new CartItem() { quantity = Soluong, book = product });
-
-
             }
             else
             {
                 cartitem.quantity += Soluong;
-
             }
 
-            // Lưu cart vào Session
             SaveCartSession(cart);
 
             return RedirectToAction("Cart");
@@ -63,38 +58,34 @@ namespace FPTBookStore.Controllers
             {
                 var product = db.Book.SingleOrDefault(p => p.IdBook == productid);
                 cart.Add(new CartItem() { quantity = 1, book = product });
-
-
             }
             else
             {
                 cartitem.quantity++;
-
             }
 
-            // Lưu cart vào Session
             SaveCartSession(cart);
 
             return RedirectToAction("Cart");
         }
 
+
         [Authorize(Roles = "User")]
         [Route("/removecart/{productid:int}", Name = "removecart")]
         public IActionResult RemoveCart([FromRoute] long productid)
         {
-
-            // Xử lý xóa một mục của Cart ...
             var cart = GetCartItems();
             var cartitem = cart.Find(p => p.book.IdBook == productid);
             if (cartitem != null)
             {
-                // Đã tồn tại, tăng thêm 1
                 cart.Remove(cartitem);
             }
 
             SaveCartSession(cart);
             return RedirectToAction(nameof(Cart));
         }
+
+
         [Authorize(Roles = "User")]
         public IActionResult RemoveBook(long bookID)
         {
@@ -126,13 +117,16 @@ namespace FPTBookStore.Controllers
 
 
        
-        // Hiện thị giỏ hàng
+        
         [Authorize(Roles = "User")]
         [Route("/cart", Name = "cart")]
         public IActionResult Cart()
         {
             return View(GetCartItems());
         }
+
+
+
         [Authorize(Roles = "User")]
         [Route("/checkout")]
         public IActionResult CheckOut()
@@ -145,7 +139,6 @@ namespace FPTBookStore.Controllers
 
         public const string CARTKEY = "cart";
 
-        // Lấy cart từ Session (danh sách CartItem)
         List<CartItem> GetCartItems()
         {
 
@@ -158,14 +151,12 @@ namespace FPTBookStore.Controllers
             return new List<CartItem>();
         }
 
-        // Xóa cart khỏi session
         void ClearCart()
         {
             var session = HttpContext.Session;
             session.Remove(CARTKEY);
         }
 
-        // Lưu Cart (Danh sách CartItem) vào session
         void SaveCartSession(List<CartItem> ls)
         {
             var session = HttpContext.Session;

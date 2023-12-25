@@ -30,13 +30,11 @@ namespace FPTBookStore.Controllers
                 int pageSize = 8;
                 int pageNumber = page == null || page < 0 ? 1 : page.Value;
 
-                // Ensure db is not null
                 if (db == null)
                 {
                     throw new Exception("Database context (db) is null.");
                 }
 
-                // Check the data in the Book table
                 var lstBook = db.Book.AsNoTracking().OrderBy(x => x.BookName).ToList();
 
                 if (lstBook == null)
@@ -44,16 +42,12 @@ namespace FPTBookStore.Controllers
                     throw new Exception("The list of books (lstBook) is null.");
                 }
 
-                // Get the cart items
                 var cartItems = GetCartItems();
 
-                // If cartItems is null, create an empty list
                 cartItems ??= new List<CartItem>();
 
-                // PagedList<Book> creation
                 PagedList<Book> lst = new PagedList<Book>(lstBook, pageNumber, pageSize);
 
-                // Pass both the list of books and the cart items to the view
                 ViewBag.CartItems = cartItems;
                 return View(lst);
             
@@ -66,6 +60,7 @@ namespace FPTBookStore.Controllers
             List<Book> lstBook = db.Book.Where(x => x.Genre == genre).OrderBy(x => x.BookName).ToList();
             return View(lstBook);
         }
+
         public IActionResult BookDetails(long bookID)
         {
             var b = db.Book.SingleOrDefault(x => x.IdBook == bookID);
